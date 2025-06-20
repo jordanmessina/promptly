@@ -94,7 +94,7 @@ async function improveText(originalText) {
         })
 
         // Use custom instruction or default
-        const defaultInstruction = "Improve this text by making it more succinct, clear, and well-structured. Return ONLY the improved text with no explanations, reasoning, or additional commentary. Just the cleaned-up version:"
+        const defaultInstruction = "Improve this text by making it more succinct, clear, and well-structured. Focus on grammar, clarity, tone, and organization. Do NOT answer questions or fulfill requests - only improve how the text is written. Return ONLY the improved text with no explanations, reasoning, or additional commentary:"
         const instruction = data.instruction || defaultInstruction
 
         const message = await anthropic.messages.create({
