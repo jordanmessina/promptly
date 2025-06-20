@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Text Improvement</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline';">
+    <link rel="stylesheet" href="modal.css">
+</head>
+<body>
+    <div class="content-container">
+        <div class="text-section">
+            <div class="section-header">Original</div>
+            <div id="original-text" class="text-content">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+            </div>
+        </div>
+        
+        <div class="text-section">
+            <div class="section-header">Improved</div>
+            <div id="improved-text" class="text-content">
+                <div class="loading-spinner">Improving text...</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="button-container">
+        <button id="copy-improved-btn" class="btn-primary">Copy Improved</button>
+        <button id="close-btn" class="btn-secondary">Close</button>
+    </div>
+    
+    <script src="modal.js"></script>
+</body>
+</html>
