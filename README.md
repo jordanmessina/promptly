@@ -1,10 +1,12 @@
 # Promptly
 
+> ⚡ This entire app was vibe-coded - from concept to completion!
+
 > AI-powered text improvement at your fingertips
 
 Promptly is a macOS menu bar app that instantly improves any highlighted text using Claude AI. Simply highlight text anywhere on your Mac, press `Cmd+Shift+T`, and get an enhanced version instantly.
 
-![Promptly Demo](https://via.placeholder.com/600x400/667eea/ffffff?text=Promptly+Demo)
+![Promptly Demo](demo/demo.gif)
 
 ## ✨ Features
 
@@ -87,7 +89,6 @@ Customize how Promptly improves your text:
 
 - **Issues**: [GitHub Issues](../../issues)
 - **Feature Requests**: [GitHub Discussions](../../discussions)
-- **Email**: support@promptly.app
 
 ---
 
