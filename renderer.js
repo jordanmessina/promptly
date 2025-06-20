@@ -1,12 +1,16 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('api-form')
+    const systemPromptForm = document.getElementById('system-prompt-form')
     const apiKeyInput = document.getElementById('api-key')
-    const instructionInput = document.getElementById('instruction')
+    const systemPromptInput = document.getElementById('system-prompt')
     const clearBtn = document.getElementById('clear-btn')
+    const resetPromptBtn = document.getElementById('reset-prompt-btn')
     const statusMessage = document.getElementById('status-message')
     const toggleVisibilityBtn = document.getElementById('toggle-visibility')
     const eyeIcon = document.getElementById('eye-icon')
     const eyeOffIcon = document.getElementById('eye-off-icon')
+    const tabButtons = document.querySelectorAll('.tab-button')
+    const tabContents = document.querySelectorAll('.tab-content')
 
     let savedKey = false
     let actualApiKey = ''
@@ -17,9 +21,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         actualApiKey = loadedData.anthropic
     }
     
-    // Load instruction if it exists
-    if (loadedData.instruction) {
-        instructionInput.value = loadedData.instruction
+    // Load system prompt if it exists, otherwise load default
+    if (loadedData.systemPrompt) {
+        systemPromptInput.value = loadedData.systemPrompt
+    } else {
+        const defaultPrompt = await window.electronAPI.getDefaultPrompt()
+        systemPromptInput.value = defaultPrompt
     }
 
     function updateKeyDisplay() {
@@ -85,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault()
         
         const apiKey = apiKeyInput.value.trim()
-        const instruction = instructionInput.value.trim()
         
         // Check if we need to save an API key
         let keysToSave = {}
@@ -96,10 +102,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             return
         }
 
-        const result = await window.electronAPI.saveApiKeys(keysToSave, instruction)
+        const result = await window.electronAPI.saveApiKeys(keysToSave, null)
         
         if (result.success) {
-            showMessage(result.message, 'success')
+            showMessage('API key saved successfully', 'success')
             if (keysToSave.anthropic) {
                 savedKey = true
                 actualApiKey = keysToSave.anthropic
@@ -112,7 +118,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     clearBtn.addEventListener('click', () => {
         apiKeyInput.value = ''
-        instructionInput.value = ''
         savedKey = false
         actualApiKey = ''
         statusMessage.textContent = ''
@@ -128,5 +133,64 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusMessage.className = ''
         }, 3000)
     }
+
+    // Initialize tab state
+    function initializeTabs() {
+        tabContents.forEach(content => {
+            content.classList.remove('active')
+            if (content.id === 'apikey-tab') {
+                content.classList.add('active')
+            }
+        })
+    }
+
+    // Tab switching functionality
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.dataset.tab
+            
+            // Update active button
+            tabButtons.forEach(btn => btn.classList.remove('active'))
+            button.classList.add('active')
+            
+            // Show target tab content
+            tabContents.forEach(content => {
+                content.classList.remove('active')
+                if (content.id === `${targetTab}-tab`) {
+                    content.classList.add('active')
+                }
+            })
+        })
+    })
+
+    // Initialize tabs on load
+    initializeTabs()
+
+    // System prompt form handling
+    systemPromptForm.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        
+        const systemPrompt = systemPromptInput.value.trim()
+        
+        if (!systemPrompt) {
+            showMessage('Please enter a system prompt', 'error')
+            return
+        }
+
+        const result = await window.electronAPI.saveSystemPrompt(systemPrompt)
+        
+        if (result.success) {
+            showMessage(result.message, 'success')
+        } else {
+            showMessage(result.message, 'error')
+        }
+    })
+
+    // Reset to default prompt
+    resetPromptBtn.addEventListener('click', async () => {
+        const defaultPrompt = await window.electronAPI.getDefaultPrompt()
+        systemPromptInput.value = defaultPrompt
+        showMessage('Reset to default system prompt', 'success')
+    })
 
 })

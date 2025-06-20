@@ -9,44 +9,60 @@
 <body>
     <div class="container">
         <h1>Promptly</h1>
-        <h2>API Configuration</h2>
-        <p class="subtitle">Enter your API key to get started</p>
+        <h2>Settings</h2>
+        <p class="subtitle">Configure your API key and text improvement behavior</p>
         
         <div class="shortcut-info">
             <h3>Global Shortcut</h3>
             <p>Press <kbd>Cmd/Ctrl + Shift + T</kbd> anywhere to capture highlighted text</p>
-            <p class="shortcut-note">The captured text will appear in the terminal where you started this app</p>
         </div>
         
-        <form id="api-form">
-            <div class="form-group">
-                <label for="api-key">Anthropic API Key:</label>
-                <div class="input-wrapper">
-                    <input type="password" id="api-key" name="api-key" placeholder="Enter your Anthropic API key">
-                    <button type="button" id="toggle-visibility" class="eye-button" aria-label="Toggle API key visibility">
-                        <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        <svg id="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                            <line x1="1" y1="1" x2="23" y2="23"/>
-                        </svg>
-                    </button>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="apikey">API Key</button>
+            <button class="tab-button" data-tab="systemprompt">System Prompt</button>
+        </div>
+        
+        <div class="tab-content" id="apikey-tab" style="display: block;">
+            <form id="api-form">
+                <div class="form-group">
+                    <label for="api-key">Anthropic API Key:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="api-key" name="api-key" placeholder="Enter your Anthropic API key">
+                        <button type="button" id="toggle-visibility" class="eye-button" aria-label="Toggle API key visibility">
+                            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="help-text">Get your API key from <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="instruction">Improvement Instruction:</label>
-                <textarea id="instruction" name="instruction" rows="4" placeholder="Enter custom instruction for how to improve the text (leave blank for default)"></textarea>
-                <p class="help-text">Customize how Claude improves your text. For example: "Rewrite this to be more professional and formal for business emails" or "Make this more casual and friendly for Slack messages"</p>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit">Save Settings</button>
-                <button type="button" id="clear-btn">Clear</button>
-            </div>
-        </form>
+                
+                <div class="form-actions">
+                    <button type="submit">Save API Key</button>
+                    <button type="button" id="clear-btn">Clear</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="tab-content" id="systemprompt-tab">
+            <form id="system-prompt-form">
+                <div class="form-group">
+                    <label for="system-prompt">System Prompt:</label>
+                    <textarea id="system-prompt" name="system-prompt" rows="12" placeholder="Enter the full system prompt that controls how Claude improves text"></textarea>
+                    <p class="help-text">This controls exactly how Claude improves your text. The default works well for most use cases.</p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit">Save System Prompt</button>
+                    <button type="button" id="reset-prompt-btn">Reset to Default</button>
+                </div>
+            </form>
+        </div>
         
         <div id="status-message"></div>
     </div>

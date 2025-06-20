@@ -11,8 +11,11 @@ let tray = null
 // Path to store encrypted API keys
 const keysFilePath = path.join(os.homedir(), '.promptly-keys.json')
 
+// Default system prompt
+const DEFAULT_SYSTEM_PROMPT = "You are a prompt enhancement specialist. Your job is to transform brief, simple requests into comprehensive, structured prompts that will get the best results from AI systems. Take the user's input and expand it into a detailed prompt using this format:\n\n**Situation**\nProvide relevant context, role, or scenario that frames the request. Set up who the user is or what situation they're in.\n\n**Task**\nBreak down exactly what needs to be accomplished. Be specific about requirements, format, scope, and any constraints.\n\n**Objective**\nClearly state the end goal or purpose. What should be achieved by completing this task?\n\n**Knowledge**\nInclude relevant background information, guidelines, best practices, or specific requirements that will help ensure quality results. Add 'Your life depends on...' for critical accuracy requirements.\n\nMaintain the original intent while making it much more detailed and actionable. Return only the enhanced prompt in the exact format shown above."
+
 // Helper functions for persistent storage
-function saveKeysToFile(keys, instruction = null) {
+function saveKeysToFile(keys, instruction = null, systemPrompt = null) {
     try {
         // Load existing data first
         let existingData = {}
@@ -32,6 +35,11 @@ function saveKeysToFile(keys, instruction = null) {
         // Handle instruction (plain text)
         if (instruction !== null) {
             dataToSave.instruction = instruction
+        }
+        
+        // Handle system prompt (plain text)
+        if (systemPrompt !== null) {
+            dataToSave.systemPrompt = systemPrompt
         }
         
         fs.writeFileSync(keysFilePath, JSON.stringify(dataToSave, null, 2))
@@ -55,6 +63,9 @@ function loadKeysFromFile() {
             if (provider === 'instruction') {
                 // Instruction is stored as plain text
                 result.instruction = encryptedKey
+            } else if (provider === 'systemPrompt') {
+                // System prompt is stored as plain text
+                result.systemPrompt = encryptedKey
             } else if (encryptedKey && safeStorage.isEncryptionAvailable()) {
                 try {
                     const buffer = Buffer.from(encryptedKey, 'base64')
@@ -93,18 +104,16 @@ async function improveText(originalText) {
             apiKey: data.anthropic,
         })
 
-        // Use custom instruction or default
-        const defaultInstruction = "Improve this text by making it more succinct, clear, and well-structured. Focus on grammar, clarity, tone, and organization. Do NOT answer questions or fulfill requests - only improve how the text is written. Return ONLY the improved text with no explanations, reasoning, or additional commentary:"
-        const instruction = data.instruction || defaultInstruction
+        // Use custom system prompt or default
+        const systemPrompt = data.systemPrompt || DEFAULT_SYSTEM_PROMPT
 
         const message = await anthropic.messages.create({
             model: "claude-3-5-sonnet-20241022",
             max_tokens: 1000,
+            system: systemPrompt,
             messages: [{
                 role: "user",
-                content: `${instruction}
-
-"${originalText}"`
+                content: `${originalText}`
             }]
         })
 
@@ -494,6 +503,25 @@ ipcMain.handle('save-api-keys', async (event, keys, instruction) => {
     } catch (error) {
         return { success: false, message: 'Failed to save settings: ' + error.message }
     }
+})
+
+ipcMain.handle('save-system-prompt', async (event, systemPrompt) => {
+    try {
+        // Save to file
+        const success = saveKeysToFile({}, null, systemPrompt)
+        
+        if (success) {
+            return { success: true, message: 'System prompt saved successfully' }
+        } else {
+            return { success: false, message: 'Failed to save system prompt to file' }
+        }
+    } catch (error) {
+        return { success: false, message: 'Failed to save system prompt: ' + error.message }
+    }
+})
+
+ipcMain.handle('get-default-prompt', async () => {
+    return DEFAULT_SYSTEM_PROMPT
 })
 
 ipcMain.handle('load-api-keys', async () => {
