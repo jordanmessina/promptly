@@ -1,6 +1,6 @@
 # Promptly
 
-> ⚡ This entire app was vibe-coded - from concept to completion!
+⚡ This entire app was vibe-coded
 
 > AI-powered text improvement at your fingertips
 
@@ -183,5 +183,3 @@ dist/Promptly-1.0.0-arm64.dmg   # Apple Silicon
 MIT License - see [LICENSE](LICENSE) for details.
 
 ---
-
-**Built with ❤️ using Electron and Claude AI**
